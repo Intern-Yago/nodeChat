@@ -13,7 +13,7 @@ app.engine('html', require('ejs').renderFile)
 app.set("view engine", 'html')
 
 app.use(express.static(path.join(__dirname, 'public')))
-app.use('/', (req,res)=> res.render('index.html'))
+app.use('/', (req,res)=> res.send("ola")
 
 io.on('connection', socket=>{
     socket.emit('previousMessages', messages)
