@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.5.3/socket.io.min.js" integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form id="chat">
+        <input type="text" name="username" placeholder="Digite seu usuário..." tabindex="1">
+        <div class="messages"></div>
+        <input type="text" name="message" placeholder="Digite sua mensagem..." tabindex="0" required autocomplete="off">
+        <input type="submit" value="Enviar" tabindex="2">
+        
+    </form>
+    
+    <script type="text/javascript">
+        var socket = io('http://localhost:3000/')
+        let tolerancia = setTimeout(300000)
+        window.addEventListener('blur', function(){
+            tolerancia = setTimeout(()=>{
+                socket.disconnect()
+                console.log("Desconectado");
+            }, 300000)
+        })
+        window.addEventListener('focus', function(){
+            if(socket.disconnected === true){
+                window.location.reload()
+                clearTimeout(tolerancia)
+                socket.connect
+            }
+            else{
+                clearTimeout(tolerancia)
+            }
+        })
+
+        function renderMessage(message){
+            $('.messages').append('<div class="message"><strong>'+message.author+'</strong>:'+message.message+'</div>')
+        }
+
+        socket.on('previousMessages', messages=>{
+            messages.map(message=>{
+                renderMessage(message)
+            })
+        })
+
+        socket.on('receiveMessage', function(message){
+            renderMessage(message) 
+        })
+
+        $('#chat').submit(function(event){
+            event.preventDefault()
+            var author = $('input[name=username').val()
+            var message = $('input[name=message').val()
+
+            $('input[name=message').val("")
+            if (!author.length)
+                author = 'User '+socket.id.slice(0, 3)
+            if(message.length){
+                var messageObject = {
+                    author: author,
+                    message: message
+                }
+                renderMessage(messageObject)
+                socket.emit('sendMessage', messageObject)
+            }
+        })
+    </script>
+</body>
+</html>
