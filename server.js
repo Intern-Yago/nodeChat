@@ -3,7 +3,12 @@ const path = require('path')
 const app = express()
 
 const server = require('http').createServer(app)
-const io = require('socket.io')(server)
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "https://node-chat-six.vercel.app/",
+    methods: ["GET", "POST"],
+    credentials: true
+  })
 
 var messages = []
 let conectados = 0
