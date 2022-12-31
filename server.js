@@ -8,12 +8,12 @@ const io = require('socket.io')(server)
 var messages = []
 let conectados = 0
 
-app.set('views', path.join(__dirname, 'public'))
+app.use(express.static(__dirname + '/public'));
+app.set('views', path.join(__dirname, '/public'))
 app.engine('html', require('ejs').renderFile)
 app.set("view engine", 'html')
 
-app.use(express.static(path.join(__dirname, ' public')))
-app.use('/', (req,res)=> res.render('home.html'))
+app.get('/', (req,res)=> res.sendFile(__dirname+"/public/home.html"))
 
 io.on('connection', socket=>{
     socket.emit('previousMessages', messages)
