@@ -19,7 +19,9 @@
     </form>
     
     <script type="text/javascript">
-        var socket = io('https://node-chat-six.vercel.app//')
+        var socket = io('https://node-chat-six.vercel.app//', {
+  withCredentials: true
+});)
         let tolerancia = setTimeout(300000)
         window.addEventListener('blur', function(){
             tolerancia = setTimeout(()=>{
